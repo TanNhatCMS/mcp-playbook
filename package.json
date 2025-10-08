@@ -1,6 +1,6 @@
 {
   "name": "@tannhatcms/mcp-playbook",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "type": "module",
   "bin": {
     "mcp-playbook": "dist/src/index.js"
@@ -17,7 +17,7 @@
     "format": "prettier --write .",
     "release": "standard-version"
   },
-   "publishConfig": {
+  "publishConfig": {
     "access": "public"
   },
   "keywords": [],
