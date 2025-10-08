@@ -1,0 +1,49 @@
+name: Publish to npm on tag
+
+on:
+  push:
+    tags:
+      - 'v*' # ví dụ v1.5.2 hoặc v1.6.0-beta.1
+
+jobs:
+  publish:
+    if: github.repository_owner == 'TanNhatCMS' # tránh publish từ fork
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # để dùng --provenance (npm verified)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build (tsc) & ensure executable bit
+        run: npm run build
+
+      - name: Sanity check tarball (what will be published)
+        run: npm pack --dry-run
+
+      - name: Decide npm dist-tag
+        id: tag
+        run: |
+          REF_NAME="${GITHUB_REF_NAME}"
+          if [[ "$REF_NAME" == *"-beta."* || "$REF_NAME" == *"-alpha."* || "$REF_NAME" == *"-rc."* ]]; then
+            echo "npm_tag=next" >> $GITHUB_OUTPUT
+          else
+            echo "npm_tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # --provenance để hiện "verified" trên npm (yêu cầu id-token: write)
+          npm publish --access public --tag ${{ steps.tag.outputs.npm_tag }} --provenance
