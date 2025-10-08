@@ -11,10 +11,14 @@
   ],
   "scripts": {
     "build": "tsc && shx chmod +x dist/src/*.js",
+    "prepack": "npm run build",
     "prepare": "husky && husky install",
     "watch": "tsc --watch",
     "format": "prettier --write .",
     "release": "standard-version"
+  },
+   "publishConfig": {
+    "access": "public"
   },
   "keywords": [],
   "author": "@dwarvesf",
