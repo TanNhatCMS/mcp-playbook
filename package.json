@@ -1,6 +1,6 @@
 {
   "name": "@tannhatcms/mcp-playbook",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "type": "module",
   "bin": {
     "mcp-playbook": "dist/src/index.js"
